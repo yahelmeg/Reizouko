@@ -5,7 +5,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 
 from backend.config import SECRET_KEY, JWT_ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES, REFRESH_TOKEN_EXPIRE_DAYS
-from backend.schemas.authentication import TokenData
+from backend.schemas.auth import TokenData
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='login')
 
