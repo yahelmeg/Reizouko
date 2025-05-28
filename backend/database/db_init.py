@@ -1,5 +1,6 @@
 from sqlmodel import SQLModel
-from db_config import engine
+from backend.database.db_config import engine
 
-def create_tables():
+def reset_database():
+    SQLModel.metadata.drop_all(engine)
     SQLModel.metadata.create_all(engine)

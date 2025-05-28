@@ -2,6 +2,7 @@ import os
 
 from dotenv import load_dotenv
 from sqlmodel import create_engine, SQLModel
+from backend.models.jlpt_kanji import JLPTKanji
 
 load_dotenv()
 

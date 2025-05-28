@@ -4,7 +4,7 @@ from sqlmodel import Session
 from backend.auth.encryption import hash_password, verify_password
 from backend.auth.jwt import create_access_token
 from backend.schemas.auth import TokenResponse, UserCreate, UserLogin
-from backend.utils.auth import email_exists, get_user_by_email, get_user_by_id
+from backend.utils.auth import get_user_by_email
 from backend.models.user import User
 from backend.dependencies.session import get_session
 
