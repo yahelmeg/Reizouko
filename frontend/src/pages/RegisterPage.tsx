@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Button from '../components/Button';
 import Input from '../components/Input';
+import { Link } from 'react-router-dom';
 
 const RegisterPage = () => {
   const [username, setUsername] = useState('');
@@ -50,6 +51,15 @@ const RegisterPage = () => {
 
           <Button isLoading={isLoading}>Register</Button>
         </div>
+        <p className="mt-4 text-sm text-center text-gray-600">
+          Already have an account?{' '}
+          <Link
+            to="/login"
+            className="text-blue-500 hover:underline font-medium"
+          >
+            Login
+          </Link>
+        </p>
       </div>
     </div>
   );

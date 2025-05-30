@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Button from '../components/Button';
 import Input from '../components/Input';
+import { Link } from 'react-router-dom';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -34,9 +35,17 @@ const LoginPage = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-
           <Button isLoading={isLoading}>Login</Button>
         </div>
+        <p className="mt-4 text-sm text-center text-gray-600">
+          Don't have an account?{' '}
+          <Link
+            to="/register"
+            className="text-blue-500 hover:underline font-medium"
+          >
+            Register
+          </Link>
+        </p>
       </div>
     </div>
   );
