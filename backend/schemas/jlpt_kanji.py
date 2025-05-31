@@ -1,9 +1,10 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Sequence
+from backend.models.jlpt_kanji import JLPTKanji
 
-class JLPTKanjiResponse(BaseModel):
-    kanji: str
-    meaning: str
-    onyomi: Optional[str] = ""
-    kunyomi: Optional[str] = ""
-    jlpt_level: str
+class PaginatedResponse(BaseModel):
+    data: Sequence[JLPTKanji]
+    total: int
+    page: int
+    limit: int
+    total_pages: int
