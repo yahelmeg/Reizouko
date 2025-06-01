@@ -1,5 +1,6 @@
-import Input from '../Input.tsx';
+import Input from '../general/Input.tsx';
 import AuthLabel from './AuthLabel.tsx';
+import React from 'react';
 
 interface formGroupProps {
   label: string;
