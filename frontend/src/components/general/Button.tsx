@@ -13,7 +13,7 @@ const Button: React.FC<ButtonProps> = ({
 }) => {
   return (
     <button
-      className={`w-full py-3 px-6 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
+      className={`py-3 px-6 bg-blue-600 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
       disabled={isLoading}
       {...props}
     >
