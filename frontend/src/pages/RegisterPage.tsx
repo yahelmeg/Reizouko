@@ -1,14 +1,25 @@
 import { useState } from 'react';
-import Button from '../components/Button';
-import FormGroup from '../components/FormGroup';
-import AuthCard from '../components/AuthCard';
-import { Link } from 'react-router-dom';
+import Button from '../components/general/Button.tsx';
+import FormGroup from '../components/auth/FormGroup.tsx';
+import AuthCard from '../components/auth/AuthCard.tsx';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth.ts';
 
 const RegisterPage = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+  const { register, error, isLoading } = useAuth();
+
+  const handleRegister = async () => {
+    try {
+      const res = await register(username, email, password);
+      if (res) navigate('/');
+    } catch (err) {
+      console.error('Login error', err);
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -37,7 +48,14 @@ const RegisterPage = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <Button isLoading={isLoading}>Register</Button>
+          <Button
+            isLoading={isLoading}
+            onClick={handleRegister}
+            className="w-full"
+          >
+            Register
+          </Button>
+          {error && <p className="text-sm text-red-600 mt-2">{error}</p>}
         </div>
 
         <p className="mt-4 text-sm text-center text-gray-600">

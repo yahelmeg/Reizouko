@@ -1,14 +1,26 @@
 import { useState } from 'react';
-import Button from '../components/Button';
-import Input from '../components/Input';
+import Button from '../components/general/Button.tsx';
 import { Link } from 'react-router-dom';
-import AuthCard from '../components/AuthCard';
-import FormGroup from '../components/FormGroup';
+import AuthCard from '../components/auth/AuthCard.tsx';
+import FormGroup from '../components/auth/FormGroup.tsx';
+import { useAuth } from '../hooks/useAuth.ts';
+import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const { login, error, isLoading } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogin = async () => {
+    try {
+      const res = await login(email, password);
+      if (res) navigate('/');
+    } catch (err) {
+      console.error('Login error', err);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <AuthCard>
@@ -29,7 +41,14 @@ const LoginPage = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <Button isLoading={isLoading}>Login</Button>
+          <Button
+            isLoading={isLoading}
+            className="w-full"
+            onClick={handleLogin}
+          >
+            Login
+          </Button>
+          {error && <p className="text-sm text-red-600 mt-2">{error}</p>}
         </div>
         <p className="mt-4 text-sm text-center text-gray-600">
           Don't have an account?{' '}
