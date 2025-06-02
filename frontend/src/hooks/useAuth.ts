@@ -14,7 +14,6 @@ export const useAuth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>('');
 
-  // #todo: match errors handling with backend
   const login = async (
     email: string,
     password: string
@@ -23,14 +22,17 @@ export const useAuth = () => {
       setIsLoading(true);
       setError('');
       const url = `${API_BASE_URL}/login`;
-      const response = await axios.post(url, { email, password });
+      const response = await axios.post(
+        url,
+        { email, password },
+        { withCredentials: true }
+      );
 
-      localStorage.setItem('token', response.data.access_token);
       return response.data;
     } catch (err) {
       if (axios.isAxiosError(err)) {
         const message =
-          err.response?.data?.message ||
+          err.response?.data?.detail ||
           'Invalid credentials. Please check your email and password.';
         setError(message);
         throw new Error(message);
@@ -52,13 +54,16 @@ export const useAuth = () => {
     setError('');
     try {
       const url = `${API_BASE_URL}/register`;
-      const response = await axios.post(url, { username, email, password });
-      localStorage.setItem('token', response.data.access_token);
+      const response = await axios.post(
+        url,
+        { username, email, password },
+        { withCredentials: true }
+      );
       return response.data;
     } catch (err) {
       if (axios.isAxiosError(err)) {
         const message =
-          err.response?.data?.message ||
+          err.response?.data?.detail ||
           'Invalid credentials. Please check your email and password.';
         setError(message);
         throw new Error(message);

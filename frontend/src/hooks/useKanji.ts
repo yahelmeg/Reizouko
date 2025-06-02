@@ -30,7 +30,9 @@ export const useKanji = (level: string = 'N5') => {
 
         const offset = page * BROWSE_PAGE_SIZE;
         const url = `${API_BASE_URL}/jlpt_kanji/${level}?offset=${offset}&limit=${BROWSE_PAGE_SIZE}`;
-        const response = await axios.get<PaginatedResponse>(url);
+        const response = await axios.get<PaginatedResponse>(url, {
+          withCredentials: true,
+        });
 
         const transformed = response.data.data.map(
           (item: BackendKanji): Kanji => ({
@@ -41,13 +43,12 @@ export const useKanji = (level: string = 'N5') => {
             jlptLevel: item.jlpt_level,
           })
         );
-        setKanjiData(transformed);
-
+        setKanjiData(transformed.length > 0 ? transformed : []);
         setTotalPages(response.data.total_pages);
       } catch (err) {
         if (axios.isAxiosError(err)) {
           const message =
-            err.response?.data?.message ||
+            err.response?.data?.detail ||
             'Failed to load kanji data. Please try again later.';
           setError(message);
         } else {
