@@ -4,7 +4,7 @@ from sqlmodel import Session
 from backend.auth.encryption import hash_password, verify_password
 from backend.auth.jwt import create_access_token, create_refresh_token, verify_token, get_current_user
 from backend.schemas.auth import TokenData,UserCreate, UserLogin
-from backend.utils.auth import get_user_by_email
+from backend.utils.auth import get_user_by_email, get_user_by_id
 from backend.models.user import User
 from backend.dependencies.session import get_session
 
@@ -81,8 +81,9 @@ def logout( response: Response):
     response.delete_cookie("refresh_token")
     return {"message": "Logged out successfully"}
 
-@auth_router.get("/me")
-def get_me(user: TokenData = Depends(get_current_user)):
-    return {"id": user.id}
+@auth_router.get("/me", status_code= status.HTTP_200_OK)
+def get_me(user: TokenData = Depends(get_current_user),  session: Session = Depends(get_session)):
+    user = get_user_by_id(user_id=user.id, session=session)
+    return {"id": user.id,"username": user.username}
 
 
