@@ -11,16 +11,11 @@ interface PaginatedResponse {
   total_pages: number;
 }
 
-export const useKanji = (level: string = 'N5') => {
+export const useKanji = (level: string, page: number) => {
   const [kanjiData, setKanjiData] = useState<Kanji[] | null>(null);
   const [error, setError] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
-  const [page, setPage] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(1);
-
-  useEffect(() => {
-    setPage(0);
-  }, [level]);
 
   useEffect(() => {
     const fetch = async () => {
@@ -29,7 +24,7 @@ export const useKanji = (level: string = 'N5') => {
         setError('');
 
         const offset = page * BROWSE_PAGE_SIZE;
-        const url = `${API_BASE_URL}/jlpt_kanji/${level}?offset=${offset}&limit=${BROWSE_PAGE_SIZE}`;
+        const url = `${API_BASE_URL}/jlpt_kanji/level?level=${level}&offset=${offset}&limit=${BROWSE_PAGE_SIZE}`;
         const response = await axios.get<PaginatedResponse>(url, {
           withCredentials: true,
         });
@@ -68,8 +63,5 @@ export const useKanji = (level: string = 'N5') => {
     error,
     page,
     totalPages,
-    setPage,
-    nextPage: () => page < totalPages - 1 && setPage((p) => p + 1),
-    prevPage: () => page > 0 && setPage((p) => p - 1),
   };
 };

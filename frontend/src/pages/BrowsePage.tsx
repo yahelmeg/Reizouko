@@ -2,37 +2,35 @@ import { useState } from 'react';
 import { useKanji } from '../hooks/useKanji';
 import KanjiCardGrid from '../components/kanji/KanjiCardGrid.tsx';
 import { DEFAULT_KANJI_LEVEL } from '../config.ts';
-import Button from '../components/general/Button.tsx';
-import { levelColorMap } from '../constants/levelColors.ts';
 import Loader from '../components/general/Loader.tsx';
 import Error from '../components/general/Error.tsx';
 import Pagination from '../components/general/Pagination.tsx';
-
-const levels = ['N5', 'N4', 'N3', 'N2', 'N1'];
+import KanjiLevelSelector from '../components/kanji/KanjiLevelSelector.tsx';
+import { useSearchParams } from 'react-router-dom';
 
 const BrowsePage = () => {
-  const [level, setLevel] = useState(DEFAULT_KANJI_LEVEL);
-  const { kanjiData, loading, error, page, totalPages, nextPage, prevPage } =
-    useKanji(level);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const levelParam = searchParams.get('level') || DEFAULT_KANJI_LEVEL;
+  const pageParam = parseInt(searchParams.get('page') || '0', 10);
+
+  const [level, setLevel] = useState<string>(levelParam);
+  const [page, setPage] = useState<number>(pageParam);
+  const { kanjiData, loading, error, totalPages } = useKanji(level, page);
+
+  const updateSearchParams = (lvl: string, pg: number) => {
+    setSearchParams({ level: lvl, page: String(pg) });
+  };
 
   return (
     <div className="p-4">
-      <div className="flex flex-wrap gap-2 mb-4 justify-center">
-        {levels.map((lvl) => (
-          <Button
-            key={lvl}
-            onClick={() => setLevel(lvl)}
-            className={`px-4 py-2 rounded text-sm ${
-              level === lvl
-                ? `${levelColorMap[lvl]} text-white`
-                : `bg-gray-200 text-gray-800 hover:${levelColorMap[lvl]} hover:text-white`
-            }`}
-            isLoading={false}
-          >
-            {lvl}
-          </Button>
-        ))}
-      </div>
+      <KanjiLevelSelector
+        selectedLevel={level}
+        onSelect={(newLevel) => {
+          setLevel(newLevel);
+          setPage(0);
+          updateSearchParams(newLevel, 0);
+        }}
+      />
       {loading ? (
         <Loader />
       ) : error ? (
@@ -47,8 +45,16 @@ const BrowsePage = () => {
         <Pagination
           currentPage={page}
           totalPages={totalPages}
-          onPrevious={prevPage}
-          onNext={nextPage}
+          onPrevious={() => {
+            const newPage = page - 1;
+            setPage(newPage);
+            updateSearchParams(level, newPage);
+          }}
+          onNext={() => {
+            const newPage = page + 1;
+            setPage(newPage);
+            updateSearchParams(level, newPage);
+          }}
           loading={loading}
         />
       )}

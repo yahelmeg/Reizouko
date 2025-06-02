@@ -6,6 +6,12 @@ import KanjiCharacter from './KanjiCharacter.tsx';
 import KanjiMeaning from './KanjiMeaning.tsx';
 import KanjiReading from './KanjiReading.tsx';
 import type { Kanji } from '../../types/kanji.ts';
+import KanjiLearnedBadge from './KanjiLearned.tsx';
+
+interface KanjiCardProps extends Kanji {
+  isLearned?: boolean;
+  onToggleLearned: () => void;
+}
 
 const KanjiCard: React.FC<Kanji> = ({
   character,
@@ -13,6 +19,8 @@ const KanjiCard: React.FC<Kanji> = ({
   kunyomi,
   onyomi,
   jlptLevel,
+  isLearned,
+  onToggleLearned,
 }) => {
   const badgeColor = levelColorMap[jlptLevel?.toUpperCase() ?? ''];
 
@@ -24,7 +32,11 @@ const KanjiCard: React.FC<Kanji> = ({
           className={badgeColor}
         />
       </div>
-
+      {isLearned && (
+        <div className="absolute top-3 left-3 z-10">
+          <KanjiLearnedBadge />
+        </div>
+      )}
       <KanjiCharacter character={character} />
 
       <div className="space-y-4 px-4 pb-4">
