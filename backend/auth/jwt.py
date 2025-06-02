@@ -1,13 +1,10 @@
 from datetime import datetime, timedelta, UTC
 
 from jose import JWTError, jwt
-from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
+from fastapi import HTTPException, status, Request
 
 from backend.config import SECRET_KEY, JWT_ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES, REFRESH_TOKEN_EXPIRE_DAYS
 from backend.schemas.auth import TokenData
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl='login')
 
 def create_access_token(data: dict) -> str:
     to_encode = data.copy()
@@ -30,18 +27,22 @@ def verify_token(token: str):
     except JWTError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or expired token",
-            headers={"WWW-Authenticate": "Bearer"},
+            detail="Invalid or expired token"
         )
 
-def get_current_user(token: str = Depends(oauth2_scheme)) -> TokenData:
+def get_current_user(request: Request) -> TokenData:
+    token = request.cookies.get("access_token")
+    if not token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Missing access token"
+        )
     payload = verify_token(token)
     user_id = payload.get("sub")
     if user_id is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials",
-            headers={"WWW-Authenticate": "Bearer"},
+            detail="Could not validate credentials"
         )
 
     return TokenData(id=user_id)
