@@ -2,7 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import LearnPage from './pages/LearnPage';
-import LearnLevelPage from './pages/LearnLevelPage'; // <-- import here
+import LearnLevelPage from './pages/LearnLevelPage';
 import BrowsePage from './pages/BrowsePage';
 import MainLayout from './components/layout/MainLayout';
 import MainPage from './pages/MainPage.tsx';
