@@ -10,10 +10,10 @@ import KanjiLearnedBadge from './KanjiLearned.tsx';
 
 interface KanjiCardProps extends Kanji {
   isLearned?: boolean;
-  onToggleLearned: () => void;
+  onToggleLearned?: () => void;
 }
 
-const KanjiCard: React.FC<Kanji> = ({
+const KanjiCard: React.FC<KanjiCardProps> = ({
   character,
   meaning,
   kunyomi,
@@ -32,12 +32,13 @@ const KanjiCard: React.FC<Kanji> = ({
           className={badgeColor}
         />
       </div>
+      <KanjiCharacter character={character} />
+
       {isLearned && (
         <div className="absolute top-3 left-3 z-10">
           <KanjiLearnedBadge />
         </div>
       )}
-      <KanjiCharacter character={character} />
 
       <div className="space-y-4 px-4 pb-4">
         <KanjiMeaning meaning={meaning} />

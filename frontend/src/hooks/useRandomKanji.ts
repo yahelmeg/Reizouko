@@ -25,6 +25,7 @@ export const useRandomKanji = (level: string) => {
       const backendKanji = response.data.kanji;
       if (backendKanji) {
         const transformed: Kanji = {
+          id: backendKanji.id,
           character: backendKanji.kanji,
           meaning: backendKanji.meaning,
           kunyomi: backendKanji.kunyomi,

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useSession } from './useSession';
 import axios from 'axios';
 import type { BackendKanji, Kanji } from '../types/kanji';
 import { BROWSE_PAGE_SIZE, API_BASE_URL } from '../config.ts';
@@ -16,13 +17,29 @@ export const useKanji = (level: string, page: number) => {
   const [error, setError] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
   const [totalPages, setTotalPages] = useState<number>(1);
+  const { isAuthenticated } = useSession();
 
   useEffect(() => {
     const fetch = async () => {
       try {
         setLoading(true);
         setError('');
-
+        const learnedSet = new Set<number>();
+        if (isAuthenticated) {
+          try {
+            const learnedRes = await axios.get(
+              `${API_BASE_URL}/user/me/kanji`,
+              {
+                withCredentials: true,
+              }
+            );
+            learnedRes.data.forEach((kanji: { id: number }) =>
+              learnedSet.add(kanji.id)
+            );
+          } catch (err) {
+            console.warn('Could not fetch learned kanji:', err);
+          }
+        }
         const offset = page * BROWSE_PAGE_SIZE;
         const url = `${API_BASE_URL}/jlpt_kanji/level?level=${level}&offset=${offset}&limit=${BROWSE_PAGE_SIZE}`;
         const response = await axios.get<PaginatedResponse>(url, {
@@ -30,12 +47,14 @@ export const useKanji = (level: string, page: number) => {
         });
 
         const transformed = response.data.data.map(
-          (item: BackendKanji): Kanji => ({
-            character: item.kanji,
-            meaning: item.meaning,
-            kunyomi: item.kunyomi,
-            onyomi: item.onyomi,
-            jlptLevel: item.jlpt_level,
+          (kanji: BackendKanji): Kanji => ({
+            id: kanji.id,
+            character: kanji.kanji,
+            meaning: kanji.meaning,
+            kunyomi: kanji.kunyomi,
+            onyomi: kanji.onyomi,
+            jlptLevel: kanji.jlpt_level,
+            isLearned: learnedSet.has(kanji.id),
           })
         );
         setKanjiData(transformed.length > 0 ? transformed : []);
@@ -55,7 +74,7 @@ export const useKanji = (level: string, page: number) => {
     };
 
     void fetch();
-  }, [page, level]);
+  }, [page, level, isAuthenticated]);
 
   return {
     kanjiData,

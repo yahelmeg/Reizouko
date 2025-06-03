@@ -9,14 +9,16 @@ interface KanjiGridProps {
 const KanjiCardGrid: React.FC<KanjiGridProps> = ({ kanjiData }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5">
-      {kanjiData.map((Kanji, index) => (
+      {kanjiData.map((kanji: Kanji) => (
         <KanjiCard
-          key={index}
-          character={Kanji.character}
-          meaning={Kanji.meaning}
-          onyomi={Kanji.onyomi}
-          kunyomi={Kanji.kunyomi}
-          jlptLevel={Kanji.jlptLevel}
+          key={kanji.id}
+          id={kanji.id}
+          character={kanji.character}
+          meaning={kanji.meaning}
+          onyomi={kanji.onyomi}
+          kunyomi={kanji.kunyomi}
+          jlptLevel={kanji.jlptLevel}
+          isLearned={kanji.isLearned}
         />
       ))}
     </div>
