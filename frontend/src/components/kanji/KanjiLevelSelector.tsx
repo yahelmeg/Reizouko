@@ -4,7 +4,7 @@ import Button from '../general/Button';
 import { levels } from '../../constants/kanjiLevels.ts';
 
 interface KanjiLevelSelectorProps {
-  selectedLevel: string;
+  selectedLevel?: string;
   onSelect: (level: string) => void;
 }
 
