@@ -8,7 +8,7 @@ from backend.schemas.auth import TokenData
 from backend.models.jlpt_kanji import JLPTKanji
 from backend.models.user_kanji import UserKanjiLink
 
-user_kanji_router = APIRouter(prefix="/users/me/kanji", tags=["User_Kanji"])
+user_kanji_router = APIRouter(prefix="/user/me/kanji", tags=["User_Kanji"])
 
 @user_kanji_router.get("", response_model=list[JLPTKanji])
 def get_learned_kanji(current_user: TokenData = Depends(get_current_user), session: Session = Depends(get_session)):
