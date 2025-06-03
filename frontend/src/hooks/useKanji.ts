@@ -37,7 +37,13 @@ export const useKanji = (level: string, page: number) => {
               learnedSet.add(kanji.id)
             );
           } catch (err) {
-            console.warn('Could not fetch learned kanji:', err);
+            if (axios.isAxiosError(err)) {
+              const message =
+                err.response?.data?.detail || 'Could not fetch learned Kanji.';
+              setError(message);
+            } else {
+              setError('Unexpected error occurred');
+            }
           }
         }
         const offset = page * BROWSE_PAGE_SIZE;

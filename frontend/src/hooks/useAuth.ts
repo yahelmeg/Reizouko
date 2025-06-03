@@ -35,10 +35,8 @@ export const useAuth = () => {
           err.response?.data?.detail ||
           'Invalid credentials. Please check your email and password.';
         setError(message);
-        throw new Error(message);
       } else {
         setError('Unexpected error occurred');
-        throw new Error('Unexpected error occurred');
       }
     } finally {
       setIsLoading(false);
@@ -66,10 +64,8 @@ export const useAuth = () => {
           err.response?.data?.detail ||
           'Invalid credentials. Please check your email and password.';
         setError(message);
-        throw new Error(message);
       } else {
         setError('Unexpected error occurred');
-        throw new Error('Unexpected error occurred');
       }
     } finally {
       setIsLoading(false);

@@ -11,17 +11,24 @@ interface User {
 export const useSession = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
 
   useEffect(() => {
     const checkUser = async () => {
       setLoading(true);
+      setError('');
       try {
         const response = await axios.get(`${API_BASE_URL}/me`, {
           withCredentials: true,
         });
         setUser(response.data);
-      } catch {
+      } catch (err) {
         setUser(null);
+        if (axios.isAxiosError(err)) {
+          const message =
+            err.response?.data?.detail || 'Failed to authenticate user.';
+          setError(message);
+        }
       } finally {
         setLoading(false);
       }
@@ -35,9 +42,12 @@ export const useSession = () => {
       await axios.post(url, {}, { withCredentials: true });
       setUser(null);
     } catch (err) {
-      console.error('Logoff error', err);
+      if (axios.isAxiosError(err)) {
+        const message = err.response?.data?.detail || 'Failed to logout.';
+        setError(message);
+      }
     }
   };
 
-  return { user, isAuthenticated: !!user, loading, logoff };
+  return { user, isAuthenticated: !!user, loading, logoff, error };
 };
