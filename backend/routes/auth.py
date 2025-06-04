@@ -63,6 +63,7 @@ def refresh_token(request: Request, response: Response):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid refresh token")
 
     new_access_token = create_access_token({"sub": str(user_id)})
+    new_refresh_token = create_refresh_token({"sub": str(user_id)})
 
     response.set_cookie(
         key="access_token",
@@ -70,7 +71,16 @@ def refresh_token(request: Request, response: Response):
         httponly=True,
         secure=True,
         samesite="strict",
-        max_age=900
+        max_age=900 # 15 minutes
+    )
+
+    response.set_cookie(
+        key="refresh_token",
+        value=new_refresh_token,
+        httponly=True,
+        secure=True,
+        samesite="strict",
+        max_age=7 * 24 * 60 * 60 # 1 day
     )
 
     return {"message": "Access token refreshed"}
