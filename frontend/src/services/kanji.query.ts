@@ -66,3 +66,38 @@ export const getKanjiByLevel = async (
     }
   }
 };
+
+export const getRandomKanjiByLevel = async (
+  level: string
+): Promise<{ kanji: Kanji | null; message: string }> => {
+  try {
+    const url = `${API_BASE_URL}/jlpt_kanji/random?level=${level}`;
+    const response = await axios.get(url, {
+      withCredentials: true,
+    });
+    const backendKanji = response.data.kanji;
+    const transformedKanji: Kanji | null = backendKanji
+      ? {
+          id: backendKanji.id,
+          character: backendKanji.kanji,
+          meaning: backendKanji.meaning,
+          kunyomi: backendKanji.kunyomi,
+          onyomi: backendKanji.onyomi,
+          jlptLevel: backendKanji.jlpt_level,
+        }
+      : null;
+    return {
+      kanji: transformedKanji,
+      message: response.data.message,
+    };
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      const message =
+        err.response?.data?.detail ||
+        'Failed to load kanji data. Please try again later.';
+      throw new Error(message);
+    } else {
+      throw new Error('Unexpected error occurred.');
+    }
+  }
+};

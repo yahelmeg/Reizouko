@@ -16,12 +16,10 @@ export const useLearnKanji = () => {
     try {
       await markKanjiLearned(kanjiId);
     } catch (err) {
-      if (axios.isAxiosError(err)) {
-        const message =
-          err.response?.data?.detail || 'Could not mark Kanji as learned.';
-        setError(message);
+      if (err instanceof Error) {
+        setError(err.message || 'Failed to load kanji.');
       } else {
-        setError('Unexpected error occurred');
+        setError('An unknown error occurred.');
       }
     } finally {
       setLoading(false);

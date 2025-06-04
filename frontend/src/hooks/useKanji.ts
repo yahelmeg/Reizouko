@@ -30,7 +30,7 @@ export const useKanji = (level: string, page: number) => {
 
         setKanjiData(finalKanji);
         setTotalPages(totalPages);
-      } catch (err: unknown) {
+      } catch (err) {
         if (err instanceof Error) {
           setError(err.message || 'Failed to load kanji.');
         } else {

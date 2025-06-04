@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import axios from 'axios';
-import { API_BASE_URL } from '../config';
 import type { Kanji } from '../types/kanji';
+import { getRandomKanjiByLevel } from '../services/kanji.query.ts';
 
 export const useRandomKanji = (level: string) => {
   const [kanji, setKanji] = useState<Kanji | null>(null);
@@ -15,34 +14,12 @@ export const useRandomKanji = (level: string) => {
     setMessage('');
 
     try {
-      const response = await axios.get(
-        `${API_BASE_URL}/jlpt_kanji/random?level=${level}`,
-        {
-          withCredentials: true,
-        }
-      );
-
-      const backendKanji = response.data.kanji;
-      if (backendKanji) {
-        const transformed: Kanji = {
-          id: backendKanji.id,
-          character: backendKanji.kanji,
-          meaning: backendKanji.meaning,
-          kunyomi: backendKanji.kunyomi,
-          onyomi: backendKanji.onyomi,
-          jlptLevel: backendKanji.jlpt_level,
-        };
-        setKanji(transformed);
-      } else {
-        setKanji(null);
-      }
-      setMessage(response.data.message);
+      const { kanji, message } = await getRandomKanjiByLevel(level);
+      setKanji(kanji);
+      setMessage(message);
     } catch (err) {
-      if (axios.isAxiosError(err)) {
-        const message =
-          err.response?.data?.detail ||
-          'Failed to load kanji data. Please try again later.';
-        setError(message);
+      if (err instanceof Error) {
+        setError(err.message);
       } else {
         setError('Unexpected error occurred.');
       }
