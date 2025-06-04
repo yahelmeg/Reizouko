@@ -23,13 +23,12 @@ def mark_kanji_learned(
         current_user: TokenData = Depends(get_current_user),
         session: Session = Depends(get_session)
 ):
-    user = get_user_by_id(user_id=current_user.id, session=session)
     statement = select(JLPTKanji).where(JLPTKanji.id == kanji_id)
     kanji = session.exec(statement).first()
     if not kanji:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Kanji not found")
 
-    link = UserKanjiLink(user_id = user.id, kanji_id= kanji.id)
+    link = UserKanjiLink(user_id = current_user.id, kanji_id= kanji.id)
     session.add(link)
     session.commit()
 
@@ -40,9 +39,8 @@ def unmark_kanji_learned(
     current_user: TokenData = Depends(get_current_user),
     session: Session = Depends(get_session)
 ):
-    user = get_user_by_id(current_user.id, session)
     statement = select(UserKanjiLink).where(
-            (UserKanjiLink.user_id == user.id) & (UserKanjiLink.kanji_id == kanji_id))
+            (UserKanjiLink.user_id == current_user.id) & (UserKanjiLink.kanji_id == kanji_id))
     link = session.exec(statement).first()
 
     if not link:

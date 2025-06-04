@@ -3,14 +3,14 @@ from sqlmodel import Session
 
 from backend.auth.encryption import hash_password, verify_password
 from backend.auth.jwt import create_access_token, create_refresh_token, verify_token, get_current_user
-from backend.schemas.auth import TokenData,UserCreate, UserLogin
+from backend.schemas.auth import TokenData,UserCreate, UserLogin, UserInfo
 from backend.utils.auth import get_user_by_email, get_user_by_id
 from backend.models.user import User
 from backend.dependencies.session import get_session
 
 auth_router = APIRouter(prefix="", tags=['Auth'])
 
-@auth_router.post("/register", status_code=status.HTTP_201_CREATED)
+@auth_router.post("/register",response_model=UserInfo, status_code=status.HTTP_201_CREATED)
 def register(user_data: UserCreate, response: Response, session: Session = Depends(get_session)):
     existing_email = get_user_by_email(email=user_data.email, session=session)
     if existing_email:
@@ -29,9 +29,9 @@ def register(user_data: UserCreate, response: Response, session: Session = Depen
     response.set_cookie("access_token", access_token, httponly=True, secure=True, samesite="strict", max_age=900)
     response.set_cookie("refresh_token", refresh_token, httponly=True, secure=True, samesite="strict", max_age=604800)
 
-    return {"message": "User registered successfully"}
+    return new_user
 
-@auth_router.post("/login", status_code=status.HTTP_200_OK)
+@auth_router.post("/login", response_model=UserInfo, status_code=status.HTTP_200_OK)
 def login(user_data: UserLogin, response: Response, session: Session = Depends(get_session)):
 
     user = get_user_by_email(email=user_data.email, session=session)
@@ -49,7 +49,7 @@ def login(user_data: UserLogin, response: Response, session: Session = Depends(g
     response.set_cookie("access_token", access_token, httponly=True, secure=True, samesite="strict", max_age=900)
     response.set_cookie("refresh_token", refresh_token, httponly=True, secure=True, samesite="strict", max_age=604800)
 
-    return {"message": "Login successful"}
+    return user
 
 @auth_router.post("/refresh", status_code=status.HTTP_200_OK)
 def refresh_token(request: Request, response: Response):
@@ -91,9 +91,9 @@ def logout( response: Response):
     response.delete_cookie("refresh_token")
     return {"message": "Logged out successfully"}
 
-@auth_router.get("/me", status_code= status.HTTP_200_OK)
+@auth_router.get("/me",response_model=UserInfo, status_code= status.HTTP_200_OK)
 def get_me(user: TokenData = Depends(get_current_user),  session: Session = Depends(get_session)):
     user = get_user_by_id(user_id=user.id, session=session)
-    return {"id": user.id,"username": user.username}
+    return user
 
 

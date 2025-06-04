@@ -70,7 +70,7 @@ def get_random_unlearned_kanji(
     statement = select(JLPTKanji).where(
         JLPTKanji.jlpt_level == jlpt_level).where(JLPTKanji.id.not_in(learned_id_stmt)).order_by(func.random()).limit(1)
 
-    random_kanji = session.exec(statement).one()
+    random_kanji = session.exec(statement).first()
 
     if not random_kanji:
         return JSONResponse(
