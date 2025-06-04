@@ -25,7 +25,10 @@ const KanjiCard: React.FC<KanjiCardProps> = ({
   const badgeColor = levelColorMap[jlptLevel?.toUpperCase() ?? ''];
 
   return (
-    <Card className="h-150 overflow-y-auto w-80 min-h-[24rem] mx-auto shadow-lg hover:shadow-xl transition-shadow duration-300 relative">
+    <Card
+      className="h-150 overflow-y-auto w-80 min-h-[24rem] mx-auto shadow-lg hover:shadow-xl transition-shadow duration-300 relative"
+      onClick={onToggleLearned}
+    >
       <div className="absolute top-3 right-3 z-10">
         <KanjiBadge
           label={jlptLevel?.toUpperCase() ?? ''}
