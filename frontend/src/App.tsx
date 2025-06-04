@@ -6,58 +6,61 @@ import LearnLevelPage from './pages/LearnLevelPage';
 import BrowsePage from './pages/BrowsePage';
 import MainLayout from './components/layout/MainLayout';
 import MainPage from './pages/MainPage.tsx';
+import { RecoilRoot } from 'recoil';
 
 export default function App() {
   return (
-    <Routes>
-      <Route
-        path="/"
-        element={
-          <MainLayout>
-            <MainPage />
-          </MainLayout>
-        }
-      />
-      <Route
-        path="/browse"
-        element={
-          <MainLayout>
-            <BrowsePage />
-          </MainLayout>
-        }
-      />
-      <Route
-        path="/learn"
-        element={
-          <MainLayout>
-            <LearnPage />
-          </MainLayout>
-        }
-      />
-      <Route
-        path="/learn/:level"
-        element={
-          <MainLayout>
-            <LearnLevelPage />
-          </MainLayout>
-        }
-      />
-      <Route
-        path="/login"
-        element={
-          <MainLayout>
-            <LoginPage />
-          </MainLayout>
-        }
-      />
-      <Route
-        path="/register"
-        element={
-          <MainLayout>
-            <RegisterPage />
-          </MainLayout>
-        }
-      />
-    </Routes>
+    <RecoilRoot>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <MainLayout>
+              <MainPage />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/browse"
+          element={
+            <MainLayout>
+              <BrowsePage />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/learn"
+          element={
+            <MainLayout>
+              <LearnPage />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/learn/:level"
+          element={
+            <MainLayout>
+              <LearnLevelPage />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <MainLayout>
+              <LoginPage />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <MainLayout>
+              <RegisterPage />
+            </MainLayout>
+          }
+        />
+      </Routes>
+    </RecoilRoot>
   );
 }
