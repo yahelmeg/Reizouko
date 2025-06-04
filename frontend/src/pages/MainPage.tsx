@@ -1,21 +1,18 @@
 import React from 'react';
-import { useSession } from '../hooks/useSession';
 import SectionTitle from '../components/general/SectionTitle.tsx';
 import Button from '../components/general/Button.tsx';
 import { useNavigate } from 'react-router-dom';
-import Loader from '../components/general/Loader.tsx';
+import { useRecoilValue } from 'recoil';
+import { isAuthenticated, userSelector } from '../atoms/userAtom.ts';
 
 const MainPage: React.FC = () => {
-  const { user, loading, isAuthenticated } = useSession();
   const navigate = useNavigate();
-
-  if (loading) {
-    return <Loader />;
-  }
+  const isLoggedIn = useRecoilValue(isAuthenticated);
+  const user = useRecoilValue(userSelector);
 
   return (
     <div className="max-w-3xl mx-auto px-6 py-12 text-center space-y-8">
-      {isAuthenticated ? (
+      {isLoggedIn ? (
         <>
           <SectionTitle>Welcome back, {user?.username}!</SectionTitle>
           <p className="text-gray-700 text-xl font-medium mt-2">

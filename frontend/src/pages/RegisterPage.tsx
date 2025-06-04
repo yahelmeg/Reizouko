@@ -3,21 +3,32 @@ import Button from '../components/general/Button.tsx';
 import FormGroup from '../components/auth/FormGroup.tsx';
 import AuthCard from '../components/auth/AuthCard.tsx';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth.ts';
+import { useSetRecoilState } from 'recoil';
+import { userAtom } from '../atoms/userAtom.ts';
+import { register } from '../services/auth.service.ts';
 
 const RegisterPage = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { register, error, isLoading } = useAuth();
+  const setUser = useSetRecoilState(userAtom);
 
   const handleRegister = async () => {
+    setLoading(true);
+    setError('');
     try {
       const res = await register(username, email, password);
-      if (res) navigate('/');
-    } catch (err) {
-      console.error('Login error', err);
+      if (res) {
+        setUser(res);
+        navigate('/');
+      }
+    } catch (err: unknown) {
+      setError('Login failed.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -49,7 +60,7 @@ const RegisterPage = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
           <Button
-            isLoading={isLoading}
+            isLoading={loading}
             onClick={handleRegister}
             className="w-full"
           >

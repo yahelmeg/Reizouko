@@ -1,17 +1,28 @@
-import React from 'react';
+import React, { useState } from 'react';
 import NavLink from '../general/NavLink.tsx';
 import { Link } from 'react-router-dom';
-import { useSession } from '../../hooks/useSession.ts';
 import { useNavigate } from 'react-router-dom';
 import Button from '../general/Button.tsx';
+import { logoff } from '../../services/auth.service.ts';
+import { useRecoilValue, useResetRecoilState } from 'recoil';
+import { userAtom, userSelector } from '../../atoms/userAtom.ts';
 
 const Header: React.FC = () => {
-  const { loading, isAuthenticated, logoff } = useSession();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const resetUser = useResetRecoilState(userAtom);
+
+  const user = useRecoilValue(userSelector);
 
   const handleLogout = async () => {
-    await logoff();
-    navigate('/login');
+    setLoading(true);
+    try {
+      await logoff();
+      resetUser();
+      navigate('/login');
+    } finally {
+      setLoading(false);
+    }
   };
   return (
     <header className="bg-blue-600 text-white py-4 shadow-md">
@@ -25,7 +36,7 @@ const Header: React.FC = () => {
           <NavLink to="/learn">Learn</NavLink>
           <NavLink to="/stats">Statistics</NavLink>
 
-          {!loading && isAuthenticated && (
+          {!loading && !!user && (
             <Button
               isLoading={false}
               onClick={handleLogout}
