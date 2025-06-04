@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useSession } from './useSession';
 import axios from 'axios';
 import type { BackendKanji, Kanji } from '../types/kanji';
 import { BROWSE_PAGE_SIZE, API_BASE_URL } from '../config.ts';
+import { useRecoilValue } from 'recoil';
+import { isAuthenticated } from '../atoms/userAtom.ts';
 
 interface PaginatedResponse {
   data: BackendKanji[];
@@ -17,7 +18,7 @@ export const useKanji = (level: string, page: number) => {
   const [error, setError] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
   const [totalPages, setTotalPages] = useState<number>(1);
-  const { isAuthenticated } = useSession();
+  const isLoggedIn = useRecoilValue(isAuthenticated);
 
   useEffect(() => {
     const fetch = async () => {
@@ -25,7 +26,7 @@ export const useKanji = (level: string, page: number) => {
         setLoading(true);
         setError('');
         const learnedSet = new Set<number>();
-        if (isAuthenticated) {
+        if (isLoggedIn) {
           try {
             const learnedRes = await axios.get(
               `${API_BASE_URL}/user/me/kanji`,
@@ -80,7 +81,7 @@ export const useKanji = (level: string, page: number) => {
     };
 
     void fetch();
-  }, [page, level, isAuthenticated]);
+  }, [page, level, isLoggedIn]);
 
   return {
     kanjiData,
